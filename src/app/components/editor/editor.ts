@@ -82,32 +82,36 @@ export class Editor implements AfterViewInit,ControlValueAccessor {
     @Input() formats: string[];
     
     @Output() onInit: EventEmitter<any> = new EventEmitter();
-    
+
+    @Input() quillOptions = {};
+
     value: string;
-    
+
     _readonly: boolean;
-    
+
     onModelChange: Function = () => {};
-    
+
     onModelTouched: Function = () => {};
-    
+
     quill: any;
-    
+
     constructor(public el: ElementRef, public domHandler: DomHandler) {}
 
     ngAfterViewInit() {
         let editorElement = this.domHandler.findSingle(this.el.nativeElement ,'div.ui-editor-content'); 
         let toolbarElement = this.domHandler.findSingle(this.el.nativeElement ,'div.ui-editor-toolbar'); 
-        
-        this.quill = new Quill(editorElement, {
-          modules: {
-              toolbar: toolbarElement
-          },
-          placeholder: this.placeholder,
-          readOnly: this.readonly,
-          theme: 'snow',
-          formats: this.formats
-        });
+    
+        const defaultQuillOptions = {
+            modules: {
+                toolbar: toolbarElement
+            },
+            placeholder: this.placeholder,
+            readOnly: this.readonly,
+            theme: 'snow',
+            formats: this.formats
+        };
+
+        this.quill = new Quill(editorElement, Object.assign({}, defaultQuillOptions, this.quillOptions));
                 
         if(this.value) {
             this.quill.pasteHTML(this.value);
